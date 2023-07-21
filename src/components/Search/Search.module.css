@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.input_search {
+    outline: none;
+    border: none;
+    padding: 10px;
+    border-radius: 9px 0 0 9px;
+}
+
+.btn_find {
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 0 9px 9px 0;
+    background: #C38154;
+    color: whitesmoke;
+    transition: 0.2s;
+}
+
+.btn_find:hover {
+    background: #884A39;
+    transition: 0.2s;
+}

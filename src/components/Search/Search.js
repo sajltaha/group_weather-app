@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-
+import style from './Search.module.css'
 
 export default function Search() {
     const navigate = useNavigate()
@@ -17,8 +17,8 @@ export default function Search() {
 
     return (
         <div>
-            <input type='text' onChange={handleChange} />
-            <button onClick={onClick} >Find</button>
+            <input className={style.input_search} placeholder='City name' type='text' onChange={handleChange} />
+            <button className={style.btn_find} onClick={onClick} >Find</button>
         </div>
     )
 }

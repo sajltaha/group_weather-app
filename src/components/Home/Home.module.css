@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.empty__home {
+    color: brown;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.info {
+    background: beige;
+    padding: 10 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 9px;
+    align-items: center;
+    text-align: center;
+}
+
+.char {
+    margin: 5px 0 0 0;
+}
+
+.city {
+    margin: 5px 0 0 0;
+}
