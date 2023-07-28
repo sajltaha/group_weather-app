@@ -65,7 +65,7 @@ function Home() {
     return (
         <>
             {(weather !== undefined && Object.keys(weather).length === 0) && <p className={style.empty__home}>Вы указали неправильный город</p>}
-            {weather == undefined && <p className={style.empty__home}>Вы не указали город</p>}
+            {weather === undefined && <p className={style.empty__home}>Вы не указали город</p>}
             {(weather !== undefined && Object.keys(weather).length !== 0) &&
                 <>
                     <div className={style.info}>

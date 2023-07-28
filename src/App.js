@@ -5,6 +5,7 @@ import { BsSearch } from 'react-icons/bs'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { BiHomeAlt2 } from 'react-icons/bi'
 import style from './App.module.css'
+import { useState } from "react";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route path='/' element={<RootLayout />}>
@@ -20,10 +21,19 @@ function ProfilePage() {
 }
 
 function RootLayout() {
+  const [isActive, setIsActive] = useState(false)
+  console.log(isActive)
+
+  function handleClick() {
+    setIsActive(!isActive)
+  }
   return <>
     <div className={style.card}>
       <div className={style.card_header}>
-        <Link className={style.item} to='/profile'><GiHamburgerMenu /></Link>
+        <div>
+          <div onClick={handleClick} className={style.item}><GiHamburgerMenu /></div>
+          <Link style={{ display: isActive ? 'block' : 'none', textDecoration: 'none', color: 'black' }} to='/profile'>Profile</Link>
+        </div>
         <Link className={style.item} to='/'><BiHomeAlt2 /></Link>
         <Link className={style.item} to='/search'><BsSearch /></Link>
       </div>
