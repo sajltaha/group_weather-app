@@ -4,6 +4,7 @@ import { BsFillCloudDrizzleFill, BsFillCloudRainHeavyFill, BsFillCloudSnowFill, 
 import { WiSmoke } from 'react-icons/wi'
 import { MdThunderstorm } from 'react-icons/md'
 import { useLoaderData } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const url = process.env.REACT_APP_API_URL
 const apiKey = process.env.REACT_APP_API_KEY
@@ -35,6 +36,7 @@ export async function getWeather({ params }) {
 }
 
 function Home() {
+    const navigate = useNavigate()
     const [weather, setWeather] = useState({ temp: undefined, feels_like: undefined, wind_speed: undefined, name: undefined, id: undefined })
 
     const weatherIdIcon = {
@@ -51,13 +53,30 @@ function Home() {
         if (loaderData !== undefined) {
             if (Object.keys(loaderData).length !== 0) {
                 setWeather({ temp: loaderData?.main?.temp, feels_like: loaderData?.main?.feels_like, wind_speed: loaderData?.wind?.speed, name: loaderData?.name, id: loaderData?.weather[0]?.id.toString()[0] })
+                const listOfCities = JSON.parse(localStorage.getItem('Cities'))
+                if (typeof listOfCities == 'object') {
+                    if (listOfCities == null) {
+                        localStorage.setItem('Cities', JSON.stringify([loaderData?.name]))
+                    }
+                    else if (listOfCities.length == 0) {
+                        localStorage.setItem('Cities', JSON.stringify([loaderData?.name]))
+                    }
+                    else {
+                        for (let i = 0; i < listOfCities.length; i++) {
+                            if (listOfCities[i] == loaderData?.name) {
+                                return
+                            }
+                        }
+                        listOfCities.push(loaderData?.name)
+                        localStorage.setItem('Cities', JSON.stringify(listOfCities))
+                    }
+                }
             }
             else {
                 setWeather({})
             }
         }
         else {
-            console.log(1)
             setWeather(undefined)
         }
     }, [loaderData])

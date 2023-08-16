@@ -1,0 +1,15 @@
+.list{
+    display: flex;
+    flex-direction: column;
+}
+.a {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.a:hover {
+    color: white;
+    transition: 0.3s;
+}

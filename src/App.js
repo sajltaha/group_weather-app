@@ -1,6 +1,7 @@
 import { createBrowserRouter, createRoutesFromElements, Link, Outlet, Route, RouterProvider } from "react-router-dom";
 import Home, { getWeather } from "./components/Home/Home";
 import Search from "./components/Search/Search";
+import Profile from "./components/Profile/Profile";
 import { BsSearch } from 'react-icons/bs'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { BiHomeAlt2 } from 'react-icons/bi'
@@ -12,17 +13,12 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route index element={<Home />} />
     <Route path='/:cityName' element={<Home />} loader={getWeather} />
     <Route path='/search' element={<Search />} />
-    <Route path='/profile' element={<ProfilePage />} />
+    <Route path='/profile' element={<Profile />} />
   </Route>
 ))
 
-function ProfilePage() {
-  return <h1>Profile</h1>
-}
-
 function RootLayout() {
   const [isActive, setIsActive] = useState(false)
-  console.log(isActive)
 
   function handleClick() {
     setIsActive(!isActive)
