@@ -1,108 +1,77 @@
 import { useEffect, useState } from "react";
-import style from './Home.module.css'
-import { BsFillCloudDrizzleFill, BsFillCloudRainHeavyFill, BsFillCloudSnowFill, BsCloudSun } from 'react-icons/bs'
-import { WiSmoke } from 'react-icons/wi'
-import { MdThunderstorm } from 'react-icons/md'
+import style from "./Home.module.css";
+import {
+  BsFillCloudDrizzleFill,
+  BsFillCloudRainHeavyFill,
+  BsFillCloudSnowFill,
+  BsCloudSun,
+} from "react-icons/bs";
+import { WiSmoke } from "react-icons/wi";
+import { MdThunderstorm } from "react-icons/md";
 import { useLoaderData } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { fetchWeather, getCoordinates } from "../../lib/Home_atrb";
 
-const url = process.env.REACT_APP_API_URL
-const apiKey = process.env.REACT_APP_API_KEY
-
-const getCoordinates = async (cityName) => {
-    const req = await fetch(`${url}/geo/1.0/direct?q=${cityName}&limit=1&appid=${apiKey}`)
-    const response = await req.json()
-    const data = response[0]
-    return {
-        lat: data?.lat,
-        lon: data?.lon
-    }
-}
-
-const fetchWeather = async (lat, lon) => {
-    if (lat !== undefined && lon !== undefined) {
-        const req = await fetch(`${url}/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
-        const response = await req.json()
-        return response
-    }
-    return {}
-}
+const weatherIdIcon = {
+  2: <MdThunderstorm />,
+  3: <BsFillCloudDrizzleFill />,
+  5: <BsFillCloudRainHeavyFill />,
+  6: <BsFillCloudSnowFill />,
+  7: <WiSmoke />,
+  8: <BsCloudSun />,
+};
 
 export async function getWeather({ params }) {
-    const cityName = params.cityName
-    const coordinates = await getCoordinates(cityName)
-    const weather = await fetchWeather(coordinates.lat, coordinates.lon)
-    return weather
+  const cityName = params.cityName;
+  const coordinates = await getCoordinates(cityName);
+  const weather = await fetchWeather(coordinates.lat, coordinates.lon);
+
+  if (!weather) {
+    return { status: "not found" };
+  }
+  
+  if (Object.keys(weather).length === 0) {
+    return { status: "wrong city" };
+  }
+  
+  const {
+    main: { temp, feels_like },
+    wind: { speed: wind_speed },
+    name,
+    weather: [{ id }],
+  } = weather;
+
+  const listOfCities = JSON.parse(localStorage.getItem("Cities")) || [];
+  if (!listOfCities.includes(name)) {
+    listOfCities.push(name);
+    localStorage.setItem("Cities", JSON.stringify(listOfCities));
+  }
+  return { temp, name, feels_like, wind_speed, id: String(id)[0] };
 }
 
 function Home() {
-    const navigate = useNavigate()
-    const [weather, setWeather] = useState({ temp: undefined, feels_like: undefined, wind_speed: undefined, name: undefined, id: undefined })
+  const weatherData = useLoaderData();
 
-    const weatherIdIcon = {
-        2: <MdThunderstorm />,
-        3: <BsFillCloudDrizzleFill />,
-        5: <BsFillCloudRainHeavyFill />,
-        6: <BsFillCloudSnowFill />,
-        7: <WiSmoke />,
-        8: <BsCloudSun />
-    }
+  if (!weatherData || weatherData.status === "not found") {
+    return <p className={style.empty__home}>Вы не указали город</p>;
+  }
 
-    const loaderData = useLoaderData()
-    useEffect(() => {
-        if (loaderData !== undefined) {
-            if (Object.keys(loaderData).length !== 0) {
-                setWeather({ temp: loaderData?.main?.temp, feels_like: loaderData?.main?.feels_like, wind_speed: loaderData?.wind?.speed, name: loaderData?.name, id: loaderData?.weather[0]?.id.toString()[0] })
-                const listOfCities = JSON.parse(localStorage.getItem('Cities'))
-                if (typeof listOfCities == 'object') {
-                    if (listOfCities == null) {
-                        localStorage.setItem('Cities', JSON.stringify([loaderData?.name]))
-                    }
-                    else if (listOfCities.length == 0) {
-                        localStorage.setItem('Cities', JSON.stringify([loaderData?.name]))
-                    }
-                    else {
-                        for (let i = 0; i < listOfCities.length; i++) {
-                            if (listOfCities[i] == loaderData?.name) {
-                                return
-                            }
-                        }
-                        listOfCities.push(loaderData?.name)
-                        localStorage.setItem('Cities', JSON.stringify(listOfCities))
-                    }
-                }
-            }
-            else {
-                setWeather({})
-            }
-        }
-        else {
-            setWeather(undefined)
-        }
-    }, [loaderData])
+  if (weatherData.status === "wrong city") {
+    return <p className={style.empty__home}>Вы указали неправильный город</p>;
+  }
 
-    return (
-        <>
-            {(weather !== undefined && Object.keys(weather).length === 0) && <p className={style.empty__home}>Вы указали неправильный город</p>}
-            {weather === undefined && <p className={style.empty__home}>Вы не указали город</p>}
-            {(weather !== undefined && Object.keys(weather).length !== 0) &&
-                <>
-                    <div className={style.info}>
-                        <div>{weatherIdIcon[weather.id]}</div>
-                        <p className={style.city}>{weather.name}</p>
-                        <div>
-                            {weather.temp !== undefined ?
-                                <div className={style.char}>
-                                    <p>Temperature ~ {weather.temp} C</p>
-                                    <p>Feels like ~ {weather.feels_like} C</p>
-                                    <p>Wind speed ~ {weather.wind_speed} m/s</p>
-                                </div> : ''}
-                        </div>
-                    </div>
-                </>
-            }
-        </>
-    )
+  return (
+    <div className={style.info}>
+      <div>{weatherIdIcon[weatherData.id]}</div>
+      <p className={style.city}>{weatherData.name}</p>
+      {weatherData.temp && (
+        <div className={style.char}>
+          <p>Temperature ~ {weatherData.temp} C</p>
+          <p>Feels like ~ {weatherData.feels_like} C</p>
+          <p>Wind speed ~ {weatherData.wind_speed} m/s</p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Home;
