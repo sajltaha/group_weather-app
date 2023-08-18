@@ -9,3 +9,13 @@
     color: black;
     cursor: pointer;
 }
+
+.card_header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    background: #BA704F;
+    /* height: 10%; */
+}

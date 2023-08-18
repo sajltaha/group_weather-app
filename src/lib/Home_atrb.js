@@ -23,3 +23,32 @@ export const fetchWeather = async (lat, lon) => {
   }
   return {};
 };
+
+export async function getWeather({ params }) {
+  const cityName = params.cityName;
+  const coordinates = await getCoordinates(cityName);
+  const weather = await fetchWeather(coordinates.lat, coordinates.lon);
+  
+  if (Object.keys(weather).length === 0) {
+    return { status: "wrong city" };
+  }
+  
+  const {
+    main: { temp, feels_like },
+    wind: { speed: wind_speed },
+    name,
+    weather: [{ id }],
+  } = weather;
+
+  addToLocalStorage(name)
+  
+  return { temp, name, feels_like, wind_speed, id: String(id)[0] };
+}
+
+function addToLocalStorage(name) {
+  const listOfCities = JSON.parse(localStorage.getItem("Cities")) || [];
+  if (!listOfCities.includes(name)) {
+    listOfCities.push(name);
+    localStorage.setItem("Cities", JSON.stringify(listOfCities));
+  }
+}

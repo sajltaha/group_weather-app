@@ -14,27 +14,29 @@ export default function Navbar() {
 
   return (
     <>
-      <div>
-        <div onClick={handleClick} className={style.item}>
-          <GiHamburgerMenu />
+      <div className={style.card_header}>
+        <div>
+          <div onClick={handleClick} className={style.item}>
+            <GiHamburgerMenu />
+          </div>
+          <Link
+            style={{
+              display: isActive ? "block" : "none",
+              textDecoration: "none",
+              color: "black",
+            }}
+            to="/profile"
+          >
+            Profile
+          </Link>
         </div>
-        <Link
-          style={{
-            display: isActive ? "block" : "none",
-            textDecoration: "none",
-            color: "black",
-          }}
-          to="/profile"
-        >
-          Profile
+        <Link className={style.item} to="/">
+          <BiHomeAlt2 />
+        </Link>
+        <Link className={style.item} to="/search">
+          <BsSearch />
         </Link>
       </div>
-      <Link className={style.item} to="/">
-        <BiHomeAlt2 />
-      </Link>
-      <Link className={style.item} to="/search">
-        <BsSearch />
-      </Link>
     </>
   );
 }
